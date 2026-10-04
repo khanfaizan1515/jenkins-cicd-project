@@ -20,15 +20,33 @@ pipeline {
                 echo 'Build completed successfully!'
             }
         }
+
+        stage('Deploy to AWS EC2') {
+            steps {
+                sh '''
+                    scp -i /var/lib/jenkins/.ssh/jenkins_deploy \
+                    -o StrictHostKeyChecking=no \
+                    index.html style.css script.js \
+                    ubuntu@52.66.201.169:/tmp/jenkins-cicd-project/
+
+                    ssh -i /var/lib/jenkins/.ssh/jenkins_deploy \
+                    -o StrictHostKeyChecking=no \
+                    ubuntu@52.66.201.169 \
+                    "sudo mkdir -p /var/www/jenkins-cicd-project && \
+                     sudo cp /tmp/jenkins-cicd-project/* /var/www/jenkins-cicd-project/ && \
+                     sudo chown -R www-data:www-data /var/www/jenkins-cicd-project"
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'CI Pipeline completed successfully!'
+            echo 'CI/CD Pipeline completed successfully!'
         }
 
         failure {
-            echo 'CI Pipeline failed!'
+            echo 'CI/CD Pipeline failed!'
         }
     }
 }
