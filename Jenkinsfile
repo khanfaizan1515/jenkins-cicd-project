@@ -3,13 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'git@github.com:khanfaizan1515/jenkins-cicd-project.git'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
@@ -39,4 +32,3 @@ pipeline {
         }
     }
 }
-
